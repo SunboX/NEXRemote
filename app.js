@@ -31,7 +31,7 @@ request.responseType = 'arraybuffer';
 request.onprogress = function updateProgress(event) {
     if (event.lengthComputable) {
         var percentComplete = Math.round((event.loaded / event.total) * 100);
-        console.log('Loading: ' + percentComplete + '%');
+        console.log('Loading: ' + percentComplete + ' %');
     }
 };
 request.onload = function(event) {
@@ -40,6 +40,8 @@ request.onload = function(event) {
 
     var mjpegBuffer = request.response;
 
+    console.log(arrayBuffer2String(mjpegBuffer));
+    /*
     if (mjpegBuffer) {
         var byteArray = new Uint8Array(mjpegBuffer);
         for (var i = 0; i < byteArray.byteLength; i++) {
@@ -73,6 +75,29 @@ request.onload = function(event) {
             }
         }
     }
+    */
 };
 
 request.send(null);
+
+function arrayBuffer2String(buf) {
+    var result = '';
+    if (buf) {
+        var bufView = new Uint16Array(buf);
+        for (var i = 0, len = bufView.byteLength; i < len; i++) {
+            console.log('Converting: ' + Math.round((i / len) * 100) + ' %');
+            result = result + String.fromCharCode(bufView[i]);
+        }
+    }
+    return result;
+}
+
+function string2ArrayBuffer(str) {
+    var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+    var bufView = new Uint16Array(buf);
+    for (var i = 0, strLen = str.length; i < strLen; i++) {
+        bufView[i] = str.charCodeAt(i);
+    }
+    return buf;
+}
+
